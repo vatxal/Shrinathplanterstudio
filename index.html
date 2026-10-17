@@ -192,11 +192,11 @@ footer {
 <h1>🌿 Shrinath Planter Studio 🌿</h1>
 
 <div class="filter-bar">
-    <button class="filter-btn active" onclick="loadCategory('SnakePlant', this)">Snake Plant</button>
-    <button class="filter-btn" onclick="loadCategory('ArecaPalm', this)">Areca Palm</button>
-    <button class="filter-btn" onclick="loadCategory('FicusLyrata', this)">Ficus Lyrata</button>
-    <button class="filter-btn" onclick="loadCategory('BirdofParadise', this)">Bird of Paradise</button>
-    <button class="filter-btn" onclick="loadCategory('ChampaynePalm', this)">Champayne Palm</button>
+    <button class="filter-btn active" onclick="loadCategory('snake', this)">Snake Plant</button>
+    <button class="filter-btn" onclick="loadCategory('areca', this)">Areca Palm</button>
+    <button class="filter-btn" onclick="loadCategory('ficus', this)">Ficus Lyrata</button>
+    <button class="filter-btn" onclick="loadCategory('bird', this)">Bird of Paradise</button>
+    <button class="filter-btn" onclick="loadCategory('champayne', this)">Champayne Palm</button>
 </div>
 
 <div id="gallery" class="gallery"></div>
@@ -211,7 +211,7 @@ const cart = [];
 
 const data = {
 
-    SnakePlant: `
+    snake: `
 
         <div class="card" onclick="toggleCart(this, 'Planter1')">
             <img src="https://github.com/vatxal/Shrinathplanterstudio/blob/f5b8722e774ba2dc3d6f5cb448412f33f51748f8/arecanew.png">
@@ -230,7 +230,7 @@ const data = {
         </div>
     `,
 
-    ArecaPalm: `
+    areca: `
 
         <div class="card" onclick="toggleCart(this, 'Planter1')">
             <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/f5b8722e774ba2dc3d6f5cb448412f33f51748f8/arecanew.png">
@@ -249,7 +249,7 @@ const data = {
         </div>
     `,
 
-   FicusLyrata: `
+   ficus: `
 
         <div class="card" onclick="toggleCart(this, 'Planter1')">
             <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/f5b8722e774ba2dc3d6f5cb448412f33f51748f8/arecanew.png">
@@ -268,7 +268,7 @@ const data = {
         </div>
     `,
 
-   BirdofParadise: `
+   bird: `
 
         <div class="card" onclick="toggleCart(this, 'Planter1')">
             <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
@@ -287,7 +287,7 @@ const data = {
         </div>
     `,
 
-   ChampaynePalm: `
+   champayne: `
 
         <div class="card" onclick="toggleCart(this, 'Planter1')">
             <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
