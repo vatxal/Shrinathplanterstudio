@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shrinath Planter Studio</title>
+
+<style>
+
+/* Smooth fade animation for category change */
+.fade-in {
+    animation: fadeIn 0.35s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    color: #2e2e2e;
+}
+
+h1 {
+    text-align: center;
+    padding: 20px 10px 8px;
+    font-size: 34px;
+    color: #1b5e20;
+}
+
+/* Cart Button */
+
+.cart-btn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: none;
+    color: white;
+    border: #1b5e20;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+.cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Move To Top Button */
+
+.top-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 22px;
+    background: #1b5e20;
+    color: white;
+    border: none;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    font-size: 26px;
+    cursor: pointer;
+    display: none;
+    z-index: 999;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+.filter-bar {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filter-btn {
+    padding: 10px 18px;
+    margin: 5px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    background: #e0e0e0;
+    transition: 0.3s;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    background: #1b5e20;
+    color: white;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 30px;
+    max-width: 1400px;
+    margin: auto;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+.card.selected {
+    border: 4px solid #1b5e20;
+}
+
+.card img {
+    width: 100%;
+    height: 480px;
+    object-fit: contain;
+    object-position: center;
+    background: white;
+    display: block;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.info {
+    padding: 15px;
+    text-align: center;
+}
+
+.name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1b5e20;
+}
+
+.dimension {
+    font-size: 15px;
+    color: #555;
+    margin-top: 4px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #666;
+    font-size: 14px;
+}
+
+
+
+/* Shrinath Planter Studio brand refresh — presentation only */
+:root {
+    --forest: #18391f;
+    --forest-deep: #102b17;
+    --leaf: #4e6f32;
+    --gold: #98701d;
+    --gold-light: #d9c38d;
+    --cream: #f7f2e8;
+    --paper: #fffdf8;
+    --muted: #6e6a5e;
+}
+
+html { scroll-behavior: smooth; }
+body {
+    background: #f7f2e8;
+    color: var(--forest-deep);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+.brand-banner {
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 18px 24px 8px;
+    text-align: center;
+}
+.brand-wordmark {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 1;
+    font-family: Georgia, "Times New Roman", serif;
+}
+.brand-name {
+    color: #18391f;
+    font-size: clamp(44px, 8vw, 100px);
+    font-weight: 900;
+    letter-spacing: -0.035em;
+    text-shadow: 0 1px 0 rgba(16, 43, 23, 0.12);
+}
+.brand-subtitle {
+    margin-top: 2px;
+    color: #98701d;
+    font-size: clamp(28px, 5vw, 62px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-shadow: 0 1px 0 rgba(152, 112, 29, 0.12);
+}
+.filter-bar {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 11px;
+    max-width: 1200px;
+    margin: 18px auto 12px;
+    padding: 0 24px 14px;
+}
+.filter-btn {
+    position: relative;
+    isolation: isolate;
+    padding: 14px 22px;
+    margin: 0;
+    min-height: 52px;
+    border: 1px solid #d9ceb2;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #fffdf8, #f1ead9);
+    color: #29432a;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .015em;
+    box-shadow: 0 4px 12px rgba(55, 47, 27, .07), inset 0 1px 0 rgba(255,255,255,.9);
+    transition: transform .22s ease, box-shadow .22s ease, background .22s ease, border-color .22s ease;
+}
+.filter-btn::before {
+    content: "✦";
+    color: var(--gold);
+    margin-right: 8px;
+    font-size: 12px;
+}
+.filter-btn:hover {
+    transform: translateY(-3px);
+    border-color: #b49a5e;
+    background: linear-gradient(145deg, #fffefb, #e9dfc6);
+    color: var(--forest-deep);
+    box-shadow: 0 8px 18px rgba(55, 47, 27, .12);
+}
+.filter-btn.active {
+    color: #fffaf0;
+    border-color: var(--forest);
+    background: linear-gradient(135deg, #264b2a, #102b17);
+    box-shadow: 0 7px 17px rgba(24, 57, 31, .23);
+}
+.filter-btn.active::before { color: #e1c77f; }
+.gallery {
+    gap: 25px;
+    padding: 24px 30px 36px;
+}
+.card {
+    border: 1px solid rgba(152, 112, 29, .18);
+    border-radius: 18px;
+    background: var(--paper);
+    box-shadow: 0 9px 26px rgba(37, 48, 30, .09);
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+}
+.card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(152, 112, 29, .48);
+    box-shadow: 0 16px 34px rgba(37, 48, 30, .15);
+}
+.card.selected {
+    border: 3px solid var(--forest);
+    box-shadow: 0 0 0 3px rgba(217,195,141,.55), 0 12px 28px rgba(24,57,31,.14);
+}
+.card img {
+    background: #ffffff;
+    padding: 12px;
+}
+.info {
+    padding: 17px 15px 20px;
+    background: linear-gradient(180deg, #fffdf8, #f8f2e5);
+    border-top: 1px solid #eee4ce;
+}
+.name {
+    color: var(--forest);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 700;
+}
+.dimension {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 5px 10px;
+    border: 1px solid #e5d7b7;
+    border-radius: 999px;
+    background: #f4ecd9;
+    color: #71664d;
+    font-size: 12px;
+    letter-spacing: .025em;
+}
+.cart-btn {
+    background: linear-gradient(145deg, #294f2d, #102b17);
+    color: #fffaf0;
+    border: 1px solid rgba(226, 202, 139, .8);
+}
+.cart-count {
+    background: #a67a24;
+    border: 2px solid #fffaf0;
+}
+.top-btn {
+    background: linear-gradient(145deg, #294f2d, #102b17);
+    border: 1px solid rgba(226, 202, 139, .8);
+}
+/* First-visit shopping guidance */
+.selection-tip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(100% - 32px, 980px);
+    margin: 8px auto 14px;
+    padding: 13px 16px;
+    border: 1px solid #d9c38d;
+    border-radius: 14px;
+    background: #fffdf8;
+    color: #29432a;
+    box-shadow: 0 5px 16px rgba(55, 47, 27, .06);
+    font-size: 14px;
+    line-height: 1.55;
+}
+.tip-icon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #18391f;
+    color: #fffdf8;
+    font-weight: 800;
+}
+.tip-close {
+    margin-left: auto;
+    flex: 0 0 auto;
+    border: 0;
+    background: transparent;
+    color: #6e6a5e;
+    font-size: 24px;
+    line-height: 1;
+    padding: 2px 4px;
+}
+.tip-close:hover { color: #18391f; }
+
+footer {
+    margin-top: 8px;
+    padding: 28px 20px 34px;
+    color: #5e644e;
+    border-top: 1px solid #e2d5b8;
+    background: rgba(255,253,248,.65);
+    letter-spacing: .04em;
+}
+@media (max-width: 640px) {
+    .brand-banner { padding: 8px 10px 4px; }
+    .brand-name { font-size: clamp(40px, 11vw, 64px); }
+    .brand-subtitle { font-size: clamp(27px, 7.2vw, 42px); }
+    .selection-tip { width: calc(100% - 24px); gap: 9px; padding: 11px 12px; font-size: 12px; align-items: flex-start; }
+    .tip-icon { flex-basis: 25px; width: 25px; height: 25px; }
+    .filter-bar { gap: 8px; padding: 0 12px 10px; margin-top: 12px; }
+    .filter-btn { flex: 1 1 calc(50% - 8px); padding: 12px 9px; min-height: 48px; font-size: 12px; border-radius: 12px; }
+    .filter-btn:last-child { flex-grow: 0; }
+    .gallery { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 16px 14px 28px; }
+    .card img { height: 360px; }
+    .name { font-size: 20px; }
+    .cart-btn { width: 52px; height: 52px; top: 12px; right: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Cart Button -->
+<button class="cart-btn" onclick="sendCartToWhatsApp()">
+    🛒
+    <span class="cart-count" id="cartCount">0</span>
+</button>
+
+<!-- Move To Top Button -->
+<button class="top-btn" id="topBtn" onclick="scrollToTop()">
+    ↑
+</button>
+
+<header class="brand-banner" aria-label="Shrinath Planter Studio">
+    <div class="brand-wordmark">
+        <div class="brand-name">Shrinath</div>
+        <div class="brand-subtitle">Planter Studio</div>
+    </div>
+</header>
+
+<div class="selection-tip" role="status" aria-live="polite">
+    <span class="tip-icon" aria-hidden="true">✓</span>
+    <span><strong>Quick tip:</strong> Click or tap any planter card to add it to your cart. Select your favourites, then tap the cart to send an enquiry on WhatsApp.</span>
+    <button class="tip-close" type="button" aria-label="Dismiss tip" onclick="this.parentElement.remove()">×</button>
+</div>
+
+<div class="filter-bar">
+    <button class="filter-btn active" onclick="loadCategory('snake', this)">Snake Plant</button>
+    <button class="filter-btn" onclick="loadCategory('areca', this)">Areca Palm</button>
+    <button class="filter-btn" onclick="loadCategory('ficus', this)">Ficus Lyrata</button>
+    <button class="filter-btn" onclick="loadCategory('bird', this)">Bird of Paradise</button>
+    <button class="filter-btn" onclick="loadCategory('champayne', this)">Champayne Palm</button>
+</div>
+
+<div id="gallery" class="gallery"></div>
+
+<footer>
+    Adas, Vasad, Anand, Gujarat
+</footer>
+
+<script>
+
+const cart = [];
+
+const data = {
+
+    snake: `
+
+        <div class="card" onclick="toggleCart(this, 'Tressa 18')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/9683e1041fb4bbf3034fc284ab12689cb97ecdb5/snaketressa.png">
+            <div class="info">
+                <div class="name">Tressa 18"</div>
+                <div class="dimension">Dimension: 12Dx18H</div>
+            </div>
+        </div>
+        
+        <div class="card" onclick="toggleCart(this, 'Verra 18')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/9683e1041fb4bbf3034fc284ab12689cb97ecdb5/snakeverra.png">
+            <div class="info">
+                <div class="name">Verra 18"</div>
+                <div class="dimension">Dimension: 12Dx18H</div>
+            </div>
+        </div>
+        
+        <div class="card" onclick="toggleCart(this, 'Blaze 12')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/74f8f5bdf0a2a6971fb8550777b23d2991753d6d/snakeblaze.png">
+            <div class="info">
+                <div class="name">Blaze 12"</div>
+                <div class="dimension">Dimension: 10Wx12H</div>
+            </div>
+        </div>
+
+      <div class="card" onclick="toggleCart(this, 'Convessa 8')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/74f8f5bdf0a2a6971fb8550777b23d2991753d6d/snakeconvessa.png">
+            <div class="info">
+                <div class="name">Convessa 8"</div>
+                <div class="dimension">Dimension: 8Dx8H</div>
+            </div>
+        </div>
+        
+        <div class="card" onclick="toggleCart(this, 'Kyvos 8')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/74f8f5bdf0a2a6971fb8550777b23d2991753d6d/snakekyvos.png">
+            <div class="info">
+                <div class="name">Kyvos 8"</div>
+                <div class="dimension">Dimension: 8Wx8H</div>
+            </div>
+        </div>
+
+        <div class="card" onclick="toggleCart(this, 'Vink 15')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/725b8a1d1e647571504b64907d482700c1d73efe/snakevink.png">
+            <div class="info">
+                <div class="name">Vink 15"</div>
+                <div class="dimension">Dimension: 15Dx7H</div>
+            </div>
+        </div>
+    `,
+
+    areca: `
+
+        <div class="card" onclick="toggleCart(this, 'Planter 1')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/f5b8722e774ba2dc3d6f5cb448412f33f51748f8/arecanew.png">
+            <div class="info">
+                <div class="name">Planter 1</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+
+      <div class="card" onclick="toggleCart(this, 'Planter2')">
+            <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
+            <div class="info">
+                <div class="name">Planter2</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+    `,
+
+   ficus: `
+
+        <div class="card" onclick="toggleCart(this, 'Planter1')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/f5b8722e774ba2dc3d6f5cb448412f33f51748f8/arecanew.png">
+            <div class="info">
+                <div class="name">Planter1</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+
+      <div class="card" onclick="toggleCart(this, 'Planter2')">
+            <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
+            <div class="info">
+                <div class="name">Planter2</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+    `,
+
+   bird: `
+
+        <div class="card" onclick="toggleCart(this, 'Planter1')">
+            <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
+            <div class="info">
+                <div class="name">Planter1</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+
+      <div class="card" onclick="toggleCart(this, 'Planter2')">
+            <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
+            <div class="info">
+                <div class="name">Planter2</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+    `,
+
+   champayne: `
+
+        <div class="card" onclick="toggleCart(this, 'Planter1')">
+            <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
+            <div class="info">
+                <div class="name">Planter1</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+
+      <div class="card" onclick="toggleCart(this, 'Planter2')">
+            <img src="https://raw.githubusercontent.com/vatxal/images/1195b6a96c92e73b00962e86595dba97da3dfd19/IMG1.JPG">
+            <div class="info">
+                <div class="name">Planter2</div>
+                <div class="dimension">Dimension: 12x12</div>
+            </div>
+        </div>
+    `
+};
+
+function loadCategory(category, btn) {
+
+    const gallery = document.getElementById("gallery");
+
+    gallery.innerHTML = "";
+
+    gallery.classList.remove("fade-in");
+    void gallery.offsetWidth;
+    gallery.classList.add("fade-in");
+
+    gallery.innerHTML = data[category];
+
+    document.querySelectorAll('.filter-btn')
+        .forEach(b => b.classList.remove('active'));
+
+    btn.classList.add('active');
+
+    restoreSelections();
+}
+
+function toggleCart(card, plantName) {
+
+    const index = cart.indexOf(plantName);
+
+    if (index > -1) {
+        cart.splice(index, 1);
+        card.classList.remove("selected");
+    } else {
+        cart.push(plantName);
+        card.classList.add("selected");
+    }
+
+    updateCartCount();
+}
+
+function updateCartCount() {
+    document.getElementById("cartCount").innerText = cart.length;
+}
+
+function restoreSelections() {
+
+    document.querySelectorAll('.card').forEach(card => {
+
+        const plantName = card.querySelector('.name').innerText;
+
+        if (cart.includes(plantName)) {
+            card.classList.add("selected");
+        }
+    });
+}
+
+function sendCartToWhatsApp() {
+
+    if (cart.length === 0) {
+        alert("Please select at least one plant.");
+        return;
+    }
+
+    const phoneNumber = "919904077701";
+
+    let message = "Hello, I am interested in the following planters:%0A%0A";
+
+    cart.forEach((item, index) => {
+        message += `${index + 1}. ${item}%0A`;
+    });
+
+    message += "%0APlease share more details.";
+
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+}
+
+/* Scroll To Top */
+
+window.onscroll = function () {
+
+    const topBtn = document.getElementById("topBtn");
+
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        topBtn.style.display = "block";
+    } else {
+        topBtn.style.display = "none";
+    }
+};
+
+function scrollToTop() {
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+/* Default Load */
+
+loadCategory('snake', document.querySelector('.filter-btn'));
+
+</script>
+
+</body>
+</html>
