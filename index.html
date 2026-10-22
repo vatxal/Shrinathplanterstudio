@@ -421,7 +421,8 @@ footer {
 </div>
 
 <div class="filter-bar">
-    <button class="filter-btn active" onclick="loadCategory('snake', this)">Snake Plant</button>
+    <button class="filter-btn active" onclick="loadCategory('intro', this)">Welcome</button>
+    <button class="filter-btn" onclick="loadCategory('snake', this)">Snake Plant</button>
     <button class="filter-btn" onclick="loadCategory('areca', this)">Areca Palm</button>
     <button class="filter-btn" onclick="loadCategory('ficus', this)">Ficus Lyrata</button>
     <button class="filter-btn" onclick="loadCategory('bird', this)">Bird of Paradise</button>
@@ -440,6 +441,17 @@ const cart = [];
 
 const data = {
 
+    intro: `
+
+        <div class="card" onclick="toggleCart(this, 'Premium FRP Planters')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/9683e1041fb4bbf3034fc284ab12689cb97ecdb5/snaketressa.png">
+            <div class="info">
+                <div class="name">Premium FRP Planters</div>
+                <div class="dimension">Choose your vibe: Chocolate,Grey,Stone</div>
+            </div>
+        </div>
+    `,
+    
     snake: `
 
         <div class="card" onclick="toggleCart(this, 'Tressa 18')">
@@ -662,7 +674,7 @@ function scrollToTop() {
 
 /* Default Load */
 
-loadCategory('snake', document.querySelector('.filter-btn'));
+loadCategory('intro', document.querySelector('.filter-btn'));
 
 </script>
 
