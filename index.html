@@ -425,6 +425,18 @@ footer {
 .cart-item-name { font-weight:700; color:#18391f; }
 .cart-item-size { margin-top:5px; color:#71664d; font-size:12px; line-height:1.4; }
 .cart-item-controls { display:flex; align-items:center; gap:7px; }
+.cart-qty-input {
+    width: 65px;
+    height: 34px;
+    text-align: center;
+    border: 1px solid #d9ceb2;
+    border-radius: 8px;
+    background: #fffdf8;
+    color: #18391f;
+    font-size: 15px;
+    font-weight: 600;
+    box-sizing: border-box;
+}
 .cart-item-controls button { width:30px; height:30px; border:1px solid #d9ceb2; border-radius:8px; background:#f7f2e8; color:#18391f; font-size:18px; cursor:pointer; }
 .cart-qty { min-width:20px; text-align:center; font-weight:700; }
 .cart-remove { grid-column:1/-1; justify-self:end; border:0; background:transparent; color:#a13d32; font-size:12px; font-weight:700; cursor:pointer; }
@@ -909,7 +921,17 @@ function renderCartModal() {
         const sizeControl = options.length > 1
             ? `<select class="cart-size-select" aria-label="Choose size for ${escapeHtml(item.name)}" onchange="updateCartSize('${item.id}', this.value)">${options.map(option => `<option value="${escapeHtml(option)}" ${option === item.dimension ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select>`
             : `<div class="cart-item-size">${escapeHtml(item.dimension)}</div>`;
-        return `<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)}</div>${sizeControl}</div><div class="cart-item-controls"><button type="button" aria-label="Decrease quantity" onclick="changeQuantity('${item.id}', -1)">−</button><span class="cart-qty">${item.quantity}</span><button type="button" aria-label="Increase quantity" onclick="changeQuantity('${item.id}', 1)">+</button></div><button class="cart-remove" type="button" onclick="removeCartItem('${item.id}')">Remove item</button></div>`;
+        return `<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)}</div>${sizeControl}</div><div class="cart-item-controls">
+    <input
+        type="number"
+        class="cart-qty-input"
+        min="1"
+        step="1"
+        value="${item.quantity}"
+        aria-label="Quantity for ${escapeHtml(item.name)}"
+        onchange="setQuantity('${item.id}', this.value)"
+    >
+</div><button class="cart-remove" type="button" onclick="removeCartItem('${item.id}')">Remove item</button></div>`;
     }).join('');
 }
 
@@ -918,6 +940,20 @@ function changeQuantity(id, change) {
     if (!item) return;
     item.quantity = Math.max(1, item.quantity + change);
     renderCartModal(); renderCartCount();
+}
+
+    function setQuantity(id, value) {
+    const item = cart.find(entry => entry.id === id);
+    if (!item) return;
+
+    const quantity = parseInt(value, 10);
+
+    item.quantity = Number.isFinite(quantity) && quantity >= 1
+        ? quantity
+        : 1;
+
+    renderCartModal();
+    renderCartCount();
 }
 
 function removeCartItem(id) {
