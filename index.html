@@ -788,7 +788,7 @@ function prepareProductCards(category) {
 
         card.classList.add('swipe-ready');
         const extra = additionalSizeOptions[`${category}|${name}`] || [];
-        const options = [dimension, ...extra].filter(Boolean).slice(0, 4);
+        const options = [dimension, ...extra].filter(Boolean);
         card.dataset.sizeOptions = JSON.stringify(options);
         card.dataset.sizeIndex = '0';
         if (options.length > 1) {
