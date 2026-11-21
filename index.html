@@ -469,7 +469,7 @@ footer {
         <div class="cart-dialog-header">
             <div>
                 <h2 id="cartTitle">Your Enquiry Cart</h2>
-                <p>Review your selected planters before sending your enquiry.</p>
+                <p>Review your selected planters before sending an enquiry.</p>
             </div>
             <button class="cart-close" type="button" onclick="closeCartModal()" aria-label="Close cart">×</button>
         </div>
@@ -495,7 +495,7 @@ footer {
 
 <div class="selection-tip" role="status" aria-live="polite">
     <span class="tip-icon" aria-hidden="true">✓</span>
-    <span><strong>Quick tip:</strong> Click or tap a product in the Nest&Vine or Harshdeep collections to add it to your cart. Swipe product cards to view available sizes, then review your selections before sending an enquiry on WhatsApp.</span>
+    <span><strong>Quick tip:</strong> Click or tap a product to add it to your cart. Swipe product cards to view available sizes, then review your selections before sending an enquiry on WhatsApp.</span>
     <button class="tip-close" type="button" aria-label="Dismiss tip" onclick="this.parentElement.remove()">×</button>
 </div>
 
@@ -519,6 +519,14 @@ const data = {
 
     intro: `
 
+        <div class="card" onclick="toggleCart(this, 'Vink')">
+            <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/f13886baf8ed9930412baf7766433b6909145ed6/vinknewer.png">
+            <div class="info">
+                <div class="name">Vink</div>
+                <div class="dimension">Dimension: 15"Dx7"H</div>
+            </div>
+        </div>
+        
         <div class="card" onclick="toggleCart(this, 'Premium FRP Planters')">
             <img src="https://raw.githubusercontent.com/vatxal/Shrinathplanterstudio/8a992126918fef56c9fcb6a5adcb1d7660f01e2d/colorsnew.png">
             <div class="info">
@@ -762,6 +770,7 @@ const data = {
 // Each product supports up to four options; the existing dimension remains option 1.
 const additionalSizeOptions = {
     "Harshdeep|Arty Round Eco 10": ["Dimension: 4.1Wx3.5H", "Dimension: 5.1Wx3.5H"]
+    "intro|Vink": ["Dimension: 18Dx10H"]
 };
 
 let activeCategory = 'intro';
