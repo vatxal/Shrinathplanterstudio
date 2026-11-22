@@ -625,7 +625,7 @@ footer {
 
 <div class="selection-tip" role="status" aria-live="polite">
     <span class="tip-icon" aria-hidden="true">✓</span>
-    <span><strong>Quick tip:</strong> Click or tap a product to add it to your cart. Swipe product cards to view available sizes, then review your selections before sending an enquiry on WhatsApp.</span>
+    <span><strong>Quick tip:</strong> Add your favourites to cart, review your selections, send an enquiry on WhatsApp.</span>
     <button class="tip-close" type="button" aria-label="Dismiss tip" onclick="this.parentElement.remove()">×</button>
 </div>
 
@@ -892,8 +892,8 @@ const data = {
 // Add further dimension labels here when the sizes are confirmed.
 // Each product supports up to four options; the existing dimension remains option 1.
 const additionalSizeOptions = {
-    "Harshdeep|Arty Round Eco 10": ["Dimension: 4.1Wx3.5H", "Dimension: 5.1Wx3.5H"],
-    "intro|Vink": ["Dimension: 18Dx10H"]
+    //"Harshdeep|Arty Round Eco 10": ["Dimension: 4.1Wx3.5H", "Dimension: 5.1Wx3.5H"],
+    
 };
 
 let activeCategory = 'intro';
@@ -1206,7 +1206,7 @@ function escapeHtml(value) {
 function renderCartModal() {
     const container = document.getElementById('cartItems');
     if (!cart.length) {
-        container.innerHTML = '<div class="cart-empty">Your cart is empty. Select a planter or browse the Nest & Vine catalogue.</div>';
+        container.innerHTML = '<div class="cart-empty">Your cart is empty.</div>';
         return;
     }
     container.innerHTML = cart.map(item => {
@@ -1271,7 +1271,7 @@ function sendCartToWhatsApp() {
     const phoneNumber = '919904077701';
     let message = 'Hello, I am interested in the following planters:\n\n';
     cart.forEach((item, index) => {
-        message += `${index + 1}. ${item.name}${item.rpCode ? `\n   RP code: ${item.rpCode}` : ''}${item.catalogPage ? `\n   Catalogue page: ${item.catalogPage}` : ''}${item.dimension ? `\n   Dimensions: ${item.dimension}` : ''}\n   Quantity: ${item.quantity}\n`;
+        message += `${item.name}${item.dimension ? `\nDimensions: ${item.dimension}` : ''}\nQuantity: ${item.quantity}\n\n`;
     });
     message += '\nPlease share more details.';
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
