@@ -920,48 +920,102 @@ async function ensureNestVinePdfLoaded() {
     }
 }
 
+
 async function renderNestVinePdfPage(pageNumber) {
     const requestId = ++nestVineRenderRequest;
     const status = document.getElementById('nestVinePdfStatus');
     const canvas = document.getElementById('nestVinePdfCanvas');
+
     status.style.display = 'block';
     canvas.style.display = 'none';
     status.textContent = `Loading catalogue page ${pageNumber}…`;
+
     try {
         const pdf = await ensureNestVinePdfLoaded();
+
         if (requestId !== nestVineRenderRequest) return;
+
         if (nestVinePdfRenderTask) {
-            try { nestVinePdfRenderTask.cancel(); } catch (_) {}
+            try {
+                nestVinePdfRenderTask.cancel();
+            } catch (_) {}
             nestVinePdfRenderTask = null;
         }
+
         const page = await pdf.getPage(pageNumber);
+
         if (requestId !== nestVineRenderRequest) return;
+
         const viewer = document.querySelector('.catalog-viewer');
         const baseViewport = page.getViewport({ scale: 1 });
-        const availableWidth = Math.max(260, viewer.clientWidth - 30);
-        const scale = Math.min(2, availableWidth / baseViewport.width);
+
+        // Keep the preview within the viewer without stretching it.
+        const availableWidth = Math.max(
+            1,
+            Math.min(900, viewer.clientWidth - 24)
+        );
+
+        const scale = Math.min(
+            2,
+            availableWidth / baseViewport.width
+        );
+
         const viewport = page.getViewport({ scale });
+
+        // Render at higher resolution for sharper text and images.
         const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.floor(viewport.width * pixelRatio);
-        canvas.height = Math.floor(viewport.height * pixelRatio);
-        canvas.style.width = `${Math.floor(viewport.width)}px`;
-        canvas.style.height = `${Math.floor(viewport.height)}px`;
-        const context = canvas.getContext('2d');
-        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-        nestVinePdfRenderTask = page.render({ canvasContext: context, viewport });
+
+        // Use ceil instead of floor to prevent pixel-edge clipping.
+        canvas.width = Math.ceil(viewport.width * pixelRatio);
+        canvas.height = Math.ceil(viewport.height * pixelRatio);
+
+        // Preserve the exact PDF page dimensions on screen.
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+
+        const context = canvas.getContext('2d', {
+            alpha: false
+        });
+
+        // Reset the canvas transform before rendering.
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        nestVinePdfRenderTask = page.render({
+            canvasContext: context,
+            viewport: viewport,
+            transform: pixelRatio !== 1
+                ? [pixelRatio, 0, 0, pixelRatio, 0, 0]
+                : null,
+            background: 'rgb(255, 255, 255)'
+        });
+
         await nestVinePdfRenderTask.promise;
+
+        if (requestId !== nestVineRenderRequest) return;
+
         nestVinePdfRenderTask = null;
+
         status.style.display = 'none';
         canvas.style.display = 'block';
+
         viewer.scrollTop = 0;
+
     } catch (error) {
-        if (error && error.name === 'RenderingCancelledException') return;
+
+        if (error && error.name === 'RenderingCancelledException') {
+            return;
+        }
+
         console.error('Nest & Vine PDF preview error:', error);
+
         canvas.style.display = 'none';
         status.style.display = 'block';
-        status.textContent = 'Preview could not be loaded. Please use “Open PDF” to view the catalogue.';
+
+        status.textContent =
+            'Preview could not be loaded. Please use “Open PDF” to view the catalogue.';
     }
 }
+
 
 function openNestVineCatalog() {
     const modal = document.getElementById('nestVineCatalogModal');
