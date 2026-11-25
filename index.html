@@ -544,26 +544,6 @@ footer {
 .catalog-add-btn { border-radius:999px; background:linear-gradient(135deg,#294f2d,#102b17); border:1px solid #18391f; box-shadow:0 5px 13px rgba(16,43,23,.18); }
 .catalog-add-btn:hover { transform:translateY(-2px); background:linear-gradient(135deg,#98701d,#765514); }
 @media(max-width:640px) { .catalog-header{padding:13px 15px}.catalog-toolbar{gap:8px}.catalog-nav-btn,.catalog-open-link{min-height:40px;padding:8px 10px;font-size:12px}.catalog-footer{align-items:stretch;flex-direction:column}.catalog-rp-select,.catalog-add-btn{width:100%} }
-/* Desktop catalogue: constrain the dialog and let the PDF viewer use the remaining space. */
-@media (min-width:641px) {
- .catalog-dialog { height:92vh; max-height:900px; }
- .catalog-viewer {
-  flex:1 1 0;
-  min-height:0;
-  overflow:auto;
-  align-items:center;
-  justify-content:center;
-  padding:12px;
- }
- #nestVinePdfCanvas {
-  width:auto;
-  max-width:100%;
-  max-height:100%;
-  height:auto;
-  object-fit:contain;
- }
-}
-
 @media(prefers-reduced-motion:reduce) { .catalog-modal,.catalog-modal.open .catalog-backdrop,.catalog-modal.open .catalog-dialog{animation:none;transition:none} }
 
 </style>
@@ -622,7 +602,6 @@ footer {
         <div class="catalog-viewer">
             <div id="nestVinePdfStatus" role="status" aria-live="polite">Loading catalogue preview…</div>
             <canvas id="nestVinePdfCanvas" aria-label="Selected catalogue page preview"></canvas>
-            <iframe id="nestVinePdfFallback" title="Nest & Vine catalogue PDF" style="display:none;width:100%;height:100%;min-height:420px;border:0;background:#fff"></iframe>
         </div>
         <div class="catalog-footer">
             <label class="catalog-rp-label" for="catalogRpSelect">Select RP code / size</label>
@@ -924,63 +903,20 @@ let nestVinePdfRenderTask = null;
 let nestVineRenderRequest = 0;
 let returnToCatalogAfterCart = false;
 
-const nestVinePdfCandidates = [
-    'assets/nest-vine-catalog-2026.pdf',
-    'assets/Nest%20%26%20Vine%20Catalog%202026.pdf',
-    'assets/Nest%20%26%20Vine%20Catalog%202026%281%29.pdf',
-    'assets/Nest%20%26%20Vine%20Catalog%202026%20%281%29.pdf'
-];
-let nestVineActivePdfUrl = null;
-
-function showNestVineNativePdf(pageNumber, message) {
-    const status = document.getElementById('nestVinePdfStatus');
-    const canvas = document.getElementById('nestVinePdfCanvas');
-    const frame = document.getElementById('nestVinePdfFallback');
-    const url = new URL(nestVineActivePdfUrl || nestVinePdfCandidates[0], document.baseURI).href;
-    frame.src = `${url}#page=${pageNumber}&view=FitH`;
-    frame.style.display = 'block';
-    canvas.style.display = 'none';
-    status.style.display = 'none';
-    document.getElementById('catalogOpenPdf').href = `${url}#page=${pageNumber}`;
-    if (message) console.warn('Using the browser PDF viewer:', message);
-}
-
 async function ensureNestVinePdfLoaded() {
     if (nestVinePdfDocument) return nestVinePdfDocument;
     if (nestVinePdfLoading) return nestVinePdfLoading;
-
     const status = document.getElementById('nestVinePdfStatus');
     status.textContent = 'Loading catalogue preview…';
-    if (!window.pdfjsLib) throw new Error('PDF.js could not be loaded from its CDN.');
-
+    if (!window.pdfjsLib) throw new Error('The PDF preview library could not be loaded.');
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const loadPromise = (async () => {
-        let lastError;
-        for (const candidate of nestVinePdfCandidates) {
-            const url = new URL(candidate, document.baseURI).href;
-            status.textContent = 'Loading catalogue preview…';
-            const task = pdfjsLib.getDocument({ url });
-            task.onProgress = ({ loaded, total }) => {
-                if (total > 0) status.textContent = `Loading catalogue preview… ${Math.min(99, Math.round(loaded / total * 100))}%`;
-            };
-            try {
-                const pdf = await task.promise;
-                nestVineActivePdfUrl = url;
-                document.getElementById('catalogOpenPdf').href = `${url}#page=${activeNestVinePage}`;
-                nestVinePdfDocument = pdf;
-                return pdf;
-            } catch (error) {
-                lastError = error;
-                try { await task.destroy(); } catch (_) {}
-            }
-        }
-        throw lastError || new Error('The catalogue PDF could not be found in the assets folder.');
-    })();
-    nestVinePdfLoading = loadPromise;
+    nestVinePdfLoading = pdfjsLib.getDocument('assets/nest-vine-catalog-2026.pdf').promise;
     try {
-        return await loadPromise;
-    } finally {
+        nestVinePdfDocument = await nestVinePdfLoading;
+        return nestVinePdfDocument;
+    } catch (error) {
         nestVinePdfLoading = null;
+        throw error;
     }
 }
 
@@ -988,8 +924,6 @@ async function renderNestVinePdfPage(pageNumber) {
     const requestId = ++nestVineRenderRequest;
     const status = document.getElementById('nestVinePdfStatus');
     const canvas = document.getElementById('nestVinePdfCanvas');
-    const fallbackFrame = document.getElementById('nestVinePdfFallback');
-    fallbackFrame.style.display = 'none';
     status.style.display = 'block';
     canvas.style.display = 'none';
     status.textContent = `Loading catalogue page ${pageNumber}…`;
@@ -1005,16 +939,7 @@ async function renderNestVinePdfPage(pageNumber) {
         const viewer = document.querySelector('.catalog-viewer');
         const baseViewport = page.getViewport({ scale: 1 });
         const availableWidth = Math.max(260, viewer.clientWidth - 30);
-        const isDesktop = window.innerWidth > 640;
-
-        // On desktop, fit the complete PDF page inside the visible viewer area.
-        // On mobile, retain the existing width-first behaviour for readability.
-        const widthScale = availableWidth / baseViewport.width;
-        const availableHeight = Math.max(200, viewer.clientHeight - 24);
-        const heightScale = availableHeight / baseViewport.height;
-        const scale = isDesktop
-            ? Math.min(1.5, widthScale, heightScale)
-            : Math.min(2, widthScale);
+        const scale = Math.min(2, availableWidth / baseViewport.width);
         const viewport = page.getViewport({ scale });
         const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
         canvas.width = Math.floor(viewport.width * pixelRatio);
@@ -1032,21 +957,11 @@ async function renderNestVinePdfPage(pageNumber) {
     } catch (error) {
         if (error && error.name === 'RenderingCancelledException') return;
         console.error('Nest & Vine PDF preview error:', error);
-        // If PDF.js or its worker is blocked, fall back to the browser's built-in PDF viewer.
-        showNestVineNativePdf(pageNumber, error);
+        canvas.style.display = 'none';
+        status.style.display = 'block';
+        status.textContent = 'Preview could not be loaded. Please use “Open PDF” to view the catalogue.';
     }
 }
-
-let nestVinePdfResizeTimer = null;
-window.addEventListener('resize', () => {
-    clearTimeout(nestVinePdfResizeTimer);
-    nestVinePdfResizeTimer = setTimeout(() => {
-        const modal = document.getElementById('nestVineCatalogModal');
-        if (modal && modal.classList.contains('open') && nestVinePdfDocument) {
-            renderNestVinePdfPage(activeNestVinePage);
-        }
-    }, 160);
-});
 
 function openNestVineCatalog() {
     const modal = document.getElementById('nestVineCatalogModal');
@@ -1085,7 +1000,7 @@ function selectNestVinePage(value) {
     rpSelect.value = '0';
     rpSelect.onchange = () => { activeNestVineRpIndex = Number(rpSelect.value); };
     renderNestVinePdfPage(page);
-    document.getElementById('catalogOpenPdf').href = `${nestVineActivePdfUrl || new URL(nestVinePdfCandidates[0], document.baseURI).href}#page=${page}`;
+    document.getElementById('catalogOpenPdf').href = `assets/nest-vine-catalog-2026.pdf#page=${page}`;
     const index = nestVineProductPages.indexOf(page);
     document.getElementById('catalogPrevBtn').disabled = index <= 0;
     document.getElementById('catalogNextBtn').disabled = index >= nestVineProductPages.length - 1;
