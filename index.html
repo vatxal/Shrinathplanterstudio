@@ -939,13 +939,13 @@ async function renderNestVinePdfPage(pageNumber) {
         const viewer = document.querySelector('.catalog-viewer');
         const baseViewport = page.getViewport({ scale: 1 });
         const availableWidth = Math.max(260, viewer.clientWidth - 30);
-        const scale = Math.min(2, 900 / baseViewport.width, availableWidth / baseViewport.width);
+        const scale = Math.min(2, availableWidth / baseViewport.width);
         const viewport = page.getViewport({ scale });
         const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.ceil(viewport.width * pixelRatio);
-        canvas.height = Math.ceil(viewport.height * pixelRatio);
-        canvas.style.width = `${viewport.width}px`;
-        canvas.style.height = `${viewport.height}px`;
+        canvas.width = Math.floor(viewport.width * pixelRatio);
+        canvas.height = Math.floor(viewport.height * pixelRatio);
+        canvas.style.width = `${Math.floor(viewport.width)}px`;
+        canvas.style.height = `${Math.floor(viewport.height)}px`;
         const context = canvas.getContext('2d');
         context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         nestVinePdfRenderTask = page.render({ canvasContext: context, viewport });
